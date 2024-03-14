@@ -1,0 +1,106 @@
+//100 Days of RTL//
+
+//Abilash P//
+
+//Temperature Control System//
+
+module temperature_control(clk, switch, temp, off, heating_element, fan, ac);
+  
+  parameter OFF        = 2'b00; 
+  parameter HE         = 2'b01;
+  parameter FAN        = 2'b10;
+  parameter AC         = 2'b11;
+  
+  input clk, switch;
+  input [6:0]temp;
+  output reg off, heating_element, fan, ac;
+  
+  reg [1:0]state, next_state;
+  
+  initial
+    begin
+      off            <= 0;
+      heating_element<= 0;
+      fan            <= 0;
+      ac             <= 0;
+    end
+  
+  always @(posedge clk)
+    begin
+      if(switch)
+        state<=next_state;
+      else
+        state<=OFF;
+    end
+  
+  always @(state or temp)
+    begin
+      case(state)
+          OFF: begin
+            off             = 1;
+            heating_element = 0;
+            fan             = 0;
+            ac              = 0;
+            
+            if(temp>=0 && temp<=20)
+              next_state   = HE;
+            else if(temp>20 && temp<= 30)
+              next_state   = FAN;
+            else if(temp>30)
+              next_state   = AC;
+            else
+              next_state   = OFF;
+          end
+        
+         HE: begin
+            off            = 0;
+            heating_element= 1;
+            fan            = 0;
+            ac             = 0;
+           
+            if(temp>=0 && temp<=20)
+              next_state   = HE;
+            else if(temp>20 && temp<=30)
+              next_state   = FAN;
+            else if(temp>30)
+              next_state   = AC;
+            else
+              next_state   = OFF;
+          end
+        
+         FAN: begin
+            off            = 0;
+            heating_element= 0;
+            fan            = 1;
+            ac             = 0;
+           
+            if(temp>=0 && temp<=20)
+              next_state   = HE;
+            else if(temp>20 && temp<=30)
+              next_state   = FAN;
+            else if(temp>30)
+              next_state   = AC;
+            else
+              next_state   = OFF;
+          end
+        
+         AC: begin
+            off            = 0;
+            heating_element= 0;
+            fan            = 0;
+            ac             = 1;
+           
+            if(temp>=0 && temp<=20)
+              next_state   = HE;
+            else if(temp>20 && temp<=30)
+              next_state  = FAN;
+            else if(temp>30)
+              next_state   = AC;
+            else
+              next_state   = OFF;
+          end
+        
+        default: next_state=OFF;
+      endcase
+    end
+endmodule
