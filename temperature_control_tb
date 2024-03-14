@@ -1,0 +1,69 @@
+//100 Days of RTL//
+
+//Abilash P//
+
+//Temperature Control System//
+
+module temperature_control_tb();
+  reg clk, switch;
+  reg [6:0] temp;
+  wire off, heating_element, fan, ac;
+  
+  temperature_control DUT (.clk(clk), .switch(switch), .temp(temp), .off(off), .heating_element(heating_element), .fan(fan), .ac(ac));
+  
+  initial 
+    begin
+      clk=1;
+      forever #20 clk = ~clk;  
+    end
+  
+  initial
+    begin
+    switch = 0;
+    temp = 7'b1111111;   //127
+    #40;
+    switch = 1;
+    #40;
+      
+    switch = 0;
+    #40;
+    switch = 1;
+    temp = 7'b0000101;   //5
+    #40;
+ 
+    temp = 7'b0010101;   //21
+    #40;
+      
+    temp = 7'b0100000;   //32
+    #40;
+      
+    temp = 7'b0011000;   //24
+    #40;
+    
+    switch = 0;
+    #40;
+    switch = 1;
+    temp = 7'b0000001;   //1
+    #40;
+ 
+    temp = 7'b0111111;   //63
+    #40;
+      
+    temp = 7'b0001010;   //10
+    #40;
+      
+    temp = 7'b1000000;   //64
+    #40;
+      
+    temp = 7'b0011001;   //25
+    #80;
+    $finish;
+    end 
+  
+    initial
+    begin
+       $dumpfile("dump.vcd");
+       $dumpvars(1);
+     end
+endmodule
+                           
